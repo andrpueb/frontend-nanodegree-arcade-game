@@ -13,7 +13,7 @@ var Enemy = function (y) {
 // Parameter: dt, a time delta between ticks
 Enemy.prototype.update = function (dt) {
     if (this.x < 600) {
-        this.x = this.x * dt;
+        this.x = this.x + (100 * dt);
     } else if (this.x > 505) {
         this.x = -100;
     }
@@ -157,7 +157,7 @@ var menuBackground = {
 
 
 menuBackground.render = function () {
-    ctx.fillStyle = 'rgba(10,79,89,.7)';
+    ctx.fillStyle = 'rgb(24,93,107)';
     ctx.fillRect(this.x, this.y, this.width, this.height);
 };
 
@@ -182,13 +182,10 @@ var prinGirl = new Character(505, 200, 'images/char-princess-girl.png');
 
 
 
+
 //Select characters and moving selector
 
-var selector = {
-    x: -200,
-    y: -200,
-    sprite: 'images/Selector.png'
-};
+
 
 //get the position of the mouse
 
@@ -201,43 +198,15 @@ function getMousePos(canvas, evt) {
 
 }
 
-function changeCharacter(e) {
-    var pos = getMousePos(canvas, e);
-    posx = pos.x;
-    posy = pos.y;
-    console.log(posx, posy);
-    if ((posx > 101 && posx < 202) && (posy > 250 && posy < 400)) {
-        player.sprite = "images/char-cat-girl.png";
-        selector.x = catChar.x;
-        selector.y = catChar.y;
-    } else if ((posx > 202 && posx < 303) && (posy > 250 && posy < 400)) {
-        player.sprite = 'images/char-horn-girl.png';
-        selector.x = hornChar.x;
-        selector.y = hornChar.y;
-    } else if ((posx > 303 && posx < 404) && (posy > 250 && posy < 400)) {
-        player.sprite = 'images/char-pink-girl.png';
-        selector.x = pinkGirl.x;
-        selector.y = pinkGirl.y;
-    } else if ((posx > 404 && posx < 505) && (posy > 250 && posy < 400)) {
-        player.sprite = 'images/char-boy.png';
-        selector.x = charBoy.x;
-        selector.y = charBoy.y;
-    } else if ((posx > 505 && posx < 606) && (posy > 250 && posy < 400)) {
-        player.sprite = 'images/char-princess-girl.png';
-        selector.x = prinGirl.x;
-        selector.y = prinGirl.y;
-    }
-}
-
-window.addEventListener('mousedown', changeCharacter, false);
-
-
+var selector = {
+    x: 303,
+    y: 200,
+    sprite: 'images/Selector.png'
+};
 
 selector.render = function () {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
-
-
 //Select your character text
 
 function startText() {
@@ -260,20 +229,53 @@ goButton.render = function () {
 };
 
 
+function start(main) {
+    window.addEventListener('mousedown', function startGame(e) {
+        var pos = getMousePos(canvas, e);
+        posx = pos.x;
+        posy = pos.y;
+        if ((posx > 310 && posx < 390) && (posy > 395 && posy < 470)) {
+            main();
+        }
+    }, false);
+}
 
-var start = function () {
 
-};
-window.addEventListener('mousedown', function startGame(e) {
+
+function changeCharacter(e) {
     var pos = getMousePos(canvas, e);
     posx = pos.x;
     posy = pos.y;
     console.log(posx, posy);
-    if ((posx > 220 && posx < 290) && (posy > 395 && posy < 470)) {
-        render();
+    if ((posx > 101 && posx < 202) && (posy > 250 && posy < 400)) {
+        player.sprite = "images/char-cat-girl.png";
+        selector.x = catChar.x;
+        selector.y = catChar.y;
+        console.log("posy" + selector.x + "posy" + selector.y + selector.sprite);
+    } else if ((posx > 202 && posx < 303) && (posy > 250 && posy < 400)) {
+        player.sprite = 'images/char-horn-girl.png';
+        selector.x = hornChar.x;
+        selector.y = hornChar.y;
+        console.log("posy" + selector.x + "posy" + selector.y);
+    } else if ((posx > 303 && posx < 404) && (posy > 250 && posy < 400)) {
+        player.sprite = 'images/char-pink-girl.png';
+        selector.x = pinkGirl.x;
+        selector.y = pinkGirl.y;
+        console.log("posy" + selector.x + "posy" + selector.y);
+    } else if ((posx > 404 && posx < 505) && (posy > 250 && posy < 400)) {
+        player.sprite = 'images/char-boy.png';
+        selector.x = charBoy.x;
+        selector.y = charBoy.y;
+        console.log("posy" + selector.x + "posy" + selector.y);
+    } else if ((posx > 505 && posx < 606) && (posy > 250 && posy < 400)) {
+        player.sprite = 'images/char-princess-girl.png';
+        selector.x = prinGirl.x;
+        selector.y = prinGirl.y;
+        console.log("posy" + selector.x + "posy" + selector.y);
     }
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-}, false);
+}
+
+window.addEventListener('mousedown', changeCharacter, false);
 
 var score = {};
 

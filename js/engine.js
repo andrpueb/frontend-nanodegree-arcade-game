@@ -73,7 +73,6 @@ var Engine = (function (global) {
      * game loop.
      */
     function init() {
-        main();
         reset();
         lastTime = Date.now();
     }
@@ -171,9 +170,6 @@ var Engine = (function (global) {
         score.render();
         player.render();
         pow.render();
-        reset();
-
-
 
     }
 
@@ -184,12 +180,14 @@ var Engine = (function (global) {
     function reset() {
         menuBackground.render();
         selector.render();
+
         allCharacters.forEach(function (character) {
             character.render();
         });
+
         startText();
         goButton.render();
-
+        start(main);
 
     }
 
