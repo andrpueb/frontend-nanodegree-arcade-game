@@ -273,6 +273,16 @@ function changeCharacter(e) {
         selector.y = prinGirl.y;
         console.log("posy" + selector.x + "posy" + selector.y);
     }
+    menuBackground.render();
+    selector.render();
+
+    allCharacters.forEach(function (character) {
+        character.render();
+    });
+
+    startText();
+    goButton.render();
+    start(main);
 }
 
 window.addEventListener('mousedown', changeCharacter, false);
