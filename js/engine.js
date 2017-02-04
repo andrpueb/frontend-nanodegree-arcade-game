@@ -57,6 +57,8 @@ var Engine = (function (global) {
 
 
 
+
+
         /* Set our lastTime variable which is used to determine the time delta
          * for the next time this function is called.
          */
@@ -92,6 +94,7 @@ var Engine = (function (global) {
     }
 
 
+
     /* This is called by the update function and loops through all of the
      * objects within your allEnemies array as defined in app.js and calls
      * their update() methods. It will then call the update function for your
@@ -105,6 +108,7 @@ var Engine = (function (global) {
         });
         player.update();
         player.collision();
+
 
     }
 
@@ -167,9 +171,16 @@ var Engine = (function (global) {
         allEnemies.forEach(function (enemy) {
             enemy.render();
         });
-        score.render();
+        scoreBoard.render();
         player.render();
         pow.render();
+        lifesArray.forEach(function (enemy) {
+            enemy.render();
+        });
+        lifeLessArray.forEach(function (enemy) {
+            enemy.render();
+        });
+        gameOverScreen.render(reset);
 
     }
 
@@ -184,13 +195,11 @@ var Engine = (function (global) {
         allCharacters.forEach(function (character) {
             character.render();
         });
-
         startText();
         goButton.render();
         start(main);
 
     }
-
     /* Go ahead and load all of the images we know we're going to need to
      * draw our game level. Then set init as the callback method, so that when
      * all of these images are properly loaded our game will start.
@@ -208,7 +217,13 @@ var Engine = (function (global) {
         'images/char-pink-girl.png',
         'images/char-princess-girl.png',
         'images/Selector.png',
-        'images/go.png'
+        'images/go.png',
+        'images/Heart.png',
+        'images/HeartBlack.png',
+        'images/gameOver.png',
+        'images/tryAgain.png',
+        'images/frogger.png',
+        'images/life.png'
     ]);
     Resources.onReady(init);
 

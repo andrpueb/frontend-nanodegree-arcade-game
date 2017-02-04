@@ -59,28 +59,41 @@ Pow.prototype.render = function (x, y) {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
-Pow.prototype.update = function () {
 
-};
+
+var collisionCounter = 0;
+function countCollision(){
+    if(collisionCounter === 1){
+        lifeLessArray[0] = oneLess;
+    }else if (collisionCounter === 2){
+        lifeLessArray[1]= twoLess;
+    }else if (collisionCounter === 3){
+        lifeLessArray[2] = threeLess;
+        gameOverScreen.render();
+    }
+}
+
 
 Player.prototype.collision = function () {
     for (var i = 0; i < allEnemies.length; i++) {
         var enemies = allEnemies[i];
         var thePlayerX = this.x;
         var thePlayerY = this.y;
+
         if (enemies.x >= thePlayerX - 55 && enemies.x <= thePlayerX + 55 && enemies.y >= thePlayerY - 55 && enemies.y <= thePlayerY) {
+            collisionCounter++;
             pow.x = thePlayerX;
             pow.y = thePlayerY + 50;
-            ctx.clearRect(0, 0, 500, 500);
             setTimeout(function () {
-                player.y = 400;
-                player.x = 202;
                 pow.x = -100;
                 pow.y = -100;
-            }, 300);
 
+            }, 200);
+            player.y = 400;
+            player.x = 303;
+            }
+        countCollision();
         }
-    }
 };
 
 Player.prototype.render = function () {
@@ -90,13 +103,10 @@ Player.prototype.render = function () {
 Player.prototype.handleInput = function (chPosition) {
     if (chPosition === 'left' && this.x > 202) {
         this.x = this.x - 100;
-        console.log(this.x);
     } else if (chPosition === 'right' && this.x < 404) {
         this.x = this.x + 100;
-        console.log(this.x);
     } else if (chPosition === 'up' && this.y > 100) {
         this.y = this.y - 82;
-        console.log(this.y);
         if (this.y < 100) {
             setTimeout(function () {
                 player.y = 400;
@@ -105,7 +115,6 @@ Player.prototype.handleInput = function (chPosition) {
         }
     } else if (chPosition == 'down' && this.y < 404) {
         this.y = this.y + 82;
-        console.log(this.y);
     }
 };
 
@@ -155,10 +164,21 @@ var menuBackground = {
     height: 650
 };
 
+var froggerTitle = {
+    x: 50,
+    y: 20,
+    sprite: "images/frogger.png"
+};
+
+froggerTitle.render = function(){
+    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+};
+
 
 menuBackground.render = function () {
     ctx.fillStyle = 'rgb(24,93,107)';
     ctx.fillRect(this.x, this.y, this.width, this.height);
+    froggerTitle.render();
 };
 
 //Draw characters
@@ -183,11 +203,9 @@ var prinGirl = new Character(505, 200, 'images/char-princess-girl.png');
 
 
 
-//Select characters and moving selector
 
 
-
-//get the position of the mouse
+//GET POSITION OF THE MOUSE
 
 function getMousePos(canvas, evt) {
     var rect = canvas.getBoundingClientRect();
@@ -210,9 +228,9 @@ selector.render = function () {
 //Select your character text
 
 function startText() {
-    ctx.font = '35pt sans-serif';
+    ctx.font = '30PT Verdana';
     ctx.fillStyle = 'orange';
-    ctx.fillText('Select your character', 110, 200);
+    ctx.fillText('Select your character', 160, 220);
 
 }
 
@@ -232,8 +250,8 @@ goButton.render = function () {
 function start(main) {
     window.addEventListener('mousedown', function startGame(e) {
         var pos = getMousePos(canvas, e);
-        posx = pos.x;
-        posy = pos.y;
+        var posx = pos.x;
+        var posy = pos.y;
         if ((posx > 310 && posx < 390) && (posy > 395 && posy < 470)) {
             main();
         }
@@ -251,27 +269,22 @@ function changeCharacter(e) {
         player.sprite = "images/char-cat-girl.png";
         selector.x = catChar.x;
         selector.y = catChar.y;
-        console.log("posy" + selector.x + "posy" + selector.y + selector.sprite);
     } else if ((posx > 202 && posx < 303) && (posy > 250 && posy < 400)) {
         player.sprite = 'images/char-horn-girl.png';
         selector.x = hornChar.x;
         selector.y = hornChar.y;
-        console.log("posy" + selector.x + "posy" + selector.y);
     } else if ((posx > 303 && posx < 404) && (posy > 250 && posy < 400)) {
         player.sprite = 'images/char-pink-girl.png';
         selector.x = pinkGirl.x;
         selector.y = pinkGirl.y;
-        console.log("posy" + selector.x + "posy" + selector.y);
     } else if ((posx > 404 && posx < 505) && (posy > 250 && posy < 400)) {
         player.sprite = 'images/char-boy.png';
         selector.x = charBoy.x;
         selector.y = charBoy.y;
-        console.log("posy" + selector.x + "posy" + selector.y);
     } else if ((posx > 505 && posx < 606) && (posy > 250 && posy < 400)) {
         player.sprite = 'images/char-princess-girl.png';
         selector.x = prinGirl.x;
         selector.y = prinGirl.y;
-        console.log("posy" + selector.x + "posy" + selector.y);
     }
     menuBackground.render();
     selector.render();
@@ -282,18 +295,127 @@ function changeCharacter(e) {
 
     startText();
     goButton.render();
-    start(main);
 }
 
 window.addEventListener('mousedown', changeCharacter, false);
 
-var score = {};
+var scoreBoard = {};
 
-score.render = function () {
-    ctx.fillStyle = 'rgba(142, 24, 30,1)';
-    ctx.fillRect(0, 0, 101, canvas.height);
-    ctx.fillStyle = 'rgba(142, 24, 30,1)';
-    ctx.fillRect(0, 0, canvas.width, 135);
-    ctx.fillStyle = 'rgba(142, 24, 30,1)';
-    ctx.fillRect(606, 0, 707, canvas.height);
+var life ={
+    x: 620,
+    y: 180,
+    sprite: 'images/life.png',
+    render: function(){
+        ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+    }
 };
+
+scoreBoard.render = function () {
+    ctx.fillStyle = 'rgb(24,93,107)';
+    ctx.fillRect(0, 0, 101, canvas.height);
+    ctx.fillStyle = 'rgb(24,93,107)';
+    ctx.fillRect(0, 0, canvas.width, 135);
+    ctx.fillStyle = 'rgb(24,93,107)';
+    ctx.te
+    ctx.fillRect(606, 0, 707, canvas.height);
+    froggerTitle.render();
+    life.render();
+};
+
+var Heart = function(x, y){
+    this.x = x;
+    this.y = y;
+    this.sprite = "images/Heart.png";
+    this.render = function(){
+        ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+    };
+};
+
+var heartOne = new Heart(606, 200);
+var heartTwo = new Heart(606, 300);
+var heartThree = new Heart(606, 400);
+
+var lifesArray = [heartOne, heartTwo, heartThree];
+
+var HeartBlack = function(x, y){
+    this.x = x;
+    this.y = y;
+    this.sprite = "images/HeartBlack.png";
+    this.render = function(){
+        ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+    };
+};
+
+var lifeLessArray = [];
+
+var oneLess = new HeartBlack(606, 200);
+var twoLess= new HeartBlack(606, 300);
+var threeLess = new HeartBlack(606, 400);
+
+
+var gameOverScreen = {
+    x: 180,
+    y: 150,
+    sprite: "images/gameOver.png"
+};
+
+var tryAgain = {
+    x: 250,
+    y: 450,
+    sprite: "images/tryAgain.png"
+};
+gameOverScreen.render = function(reset){
+    if(lifeLessArray.length >2){
+        ctx.fillStyle = 'rgba(182,73,38,.4)';
+        ctx.fillRect(0, 0, canvas.width,
+                     canvas.height);
+        ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+        ctx.drawImage(Resources.get(tryAgain.sprite), tryAgain.x, tryAgain.y);
+        window.addEventListener('mousedown', againButton, false);
+    }
+};
+
+function againButton(main) {
+    window.addEventListener('mousedown', function continueGame(e) {
+        var pos = getMousePos(canvas, e);
+        var posx = pos.x;
+        var posy = pos.y;
+        if ((posx > 310 && posx < 390) && (posy > 395 && posy < 470)) {
+
+        }
+    }, false);
+}
+
+var Gem = function(x, y){
+    this.x = x;
+    this.y = y;
+    this.render = function(){ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+                            };
+};
+
+var gemsArray = [];
+
+var orangeGem = new Gem();
+orangeGem.sprite = "images/Gem Orange.png";
+
+var greenGem = new Gem();
+greenGem.sprite = "images/Gem Green.png";
+
+var blueGem = new Gem();
+greenGem.sprite = "images/Blue Green.png";
+
+function drawGems(){
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
