@@ -108,7 +108,7 @@ var Engine = (function (global) {
         });
         player.update();
         player.collision();
-
+        orangeGem.collision();
 
     }
 
@@ -168,6 +168,7 @@ var Engine = (function (global) {
          * the render function you have defined.
          */
 
+        orangeGem.render();
         allEnemies.forEach(function (enemy) {
             enemy.render();
         });
@@ -181,7 +182,6 @@ var Engine = (function (global) {
             enemy.render();
         });
         gameOverScreen.render(reset);
-
     }
 
     /* This function does nothing but it could have been a good place to
@@ -223,7 +223,10 @@ var Engine = (function (global) {
         'images/gameOver.png',
         'images/tryAgain.png',
         'images/frogger.png',
-        'images/life.png'
+        'images/life.png',
+        'images/Gem Orange.png',
+        'images/Gem Green.png',
+        'images/Gem Blue.png'
     ]);
     Resources.onReady(init);
 
