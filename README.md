@@ -1,6 +1,21 @@
-frontend-nanodegree-arcade-game
-===============================
+# Frogger
 
-Students should use this [rubric](https://review.udacity.com/#!/projects/2696458597/rubric) for self-checking their submission. Make sure the functions you write are **object-oriented** - either class functions (like Player and Enemy) or class prototype functions such as Enemy.prototype.checkCollisions, and that the keyword 'this' is used appropriately within your class and class prototype functions to refer to the object the function is called upon. Also be sure that the **readme.md** file is updated with your instructions on both how to 1. Run and 2. Play your arcade game.
+Frogger is a game were the idea is to move the character around the board collecting gems and avoiding to crash against the bugs, the most gems you collect the faster the bugs run so you must be careful!!
 
-For detailed instructions on how to get started, check out this [guide](https://docs.google.com/document/d/1v01aScPjSWCCWQLIpFqvg3-vXLH2e8_SZQKC8jNO0Dc/pub?embedded=true).
+## Quickstart
+  - Open the folder frontend-nanodegree-arcade-game
+  - Double click over the index.html file.
+  - A new tab in your browser will open with the game.
+
+## How to play
+  - Select your caracter clicking over your favourite.
+  - click over the button GO!
+  - Move your character around the playground with the keyboard arrows.
+
+## Rules
+  - If a bug hits you, you lose a heart. Be careful, you have only 3!
+  - you wil get points with every gem you collect, the Green Gem is 1 point, the Orange Gem is 2 points and the Blue Gem is 3 points.
+  - If the blood level is not complete (hearts) you can recover one with 10 points.
+  - If your blood level is complete you will change level every 10 points, the bugs will move faster!!
+  - But if a bug hits you will lose a heart and the 10 points to recover that heart and of course you will go down one level and the bugs will become nicer and slower.
+  - If you lose all your hearts the Game is Over!
