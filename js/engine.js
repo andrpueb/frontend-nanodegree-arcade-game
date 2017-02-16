@@ -108,7 +108,7 @@ var Engine = (function (global) {
         });
         player.update();
         player.collision();
-        orangeGem.collision();
+        collision();
 
     }
 
@@ -169,6 +169,8 @@ var Engine = (function (global) {
          */
 
         orangeGem.render();
+        greenGem.render();
+        blueGem.render();
         allEnemies.forEach(function (enemy) {
             enemy.render();
         });

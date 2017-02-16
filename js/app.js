@@ -10,18 +10,16 @@ var Enemy = function(x, y) {
     this.speed = setSpeed();
 };
 
-var setSpeed = function () {
-      random = Math.random();
-      if (random < 0.33) {
-        return 400;
-      }
-      else if (random > 0.66) {
+var setSpeed = function() {
+    random = Math.random();
+    if (random < 0.33) {
+        return 220;
+    } else if (random > 0.66) {
+        return 150;
+    } else {
         return 300;
-      }
-      else {
-        return 500;
-      }
-    };
+    }
+};
 // Update the enemy's position, required method for game
 // Parameter: dt, a time delta between ticks
 
@@ -31,17 +29,15 @@ var setSpeed = function () {
 // all computers.
 var enemyYpositions = [140, 220, 300];
 var enemyXpositions = [-100, -500, -800, -1000, -300, -2000, -1500];
-var speeds = [300, 400, 500];
 
 var changeYposition = function() {
     return enemyYpositions[Math.floor(Math.random() * (3))];
 };
 
-var changeXposition = function(){
-  return enemyXpositions[Math.floor(Math.random() * (8 - 1 + 0) + 1)];
+var changeXposition = function() {
+    return enemyXpositions[Math.floor(Math.random() * (8 - 1 + 0) + 1)];
 };
 
-var changeSpeed =  speeds[Math.floor(Math.random() * (3))];
 
 var enemyOneOne = new Enemy(changeXposition(), changeYposition());
 var enemyOneTwo = new Enemy(changeXposition(), changeYposition());
@@ -54,13 +50,11 @@ var enemyThreeThree = new Enemy(changeXposition(), changeYposition());
 
 Enemy.prototype.update = function(dt) {
     if (this.x < 600) {
-        this.x = this.x + (dt * this.speed);
+        this.x = this.x + (dt * this.speed) * level();
     } else {
         this.x = changeXposition();
     }
 };
-
-
 
 // Draw the enemy on the screen, required method for game
 Enemy.prototype.render = function() {
@@ -228,12 +222,7 @@ var pinkGirl = new Character(303, 200, 'images/char-pink-girl.png');
 var charBoy = new Character(404, 200, 'images/char-boy.png');
 var prinGirl = new Character(505, 200, 'images/char-princess-girl.png');
 
-
-
-
-
-
-//GET POSITION OF THE MOUSE
+//GET THE POSITION OF THE MOUSE
 
 function getMousePos(canvas, evt) {
     var rect = canvas.getBoundingClientRect();
@@ -285,13 +274,11 @@ function start(main) {
     }, false);
 }
 
-
-
+//CHANGE CHARACTER
 function changeCharacter(e) {
     var pos = getMousePos(canvas, e);
     posx = pos.x;
     posy = pos.y;
-    console.log(posx, posy);
     if ((posx > 101 && posx < 202) && (posy > 250 && posy < 400)) {
         player.sprite = "images/char-cat-girl.png";
         selector.x = catChar.x;
@@ -327,13 +314,7 @@ function changeCharacter(e) {
 window.addEventListener('mousedown', changeCharacter, false);
 
 var scoreBoard = {};
-var Gem = function(x, y) {
-    this.x = x;
-    this.y = y;
-    this.render = function() {
-        ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-    };
-};
+
 var life = {
     x: 620,
     y: 180,
@@ -351,6 +332,14 @@ var Heart = function(x, y) {
     };
 };
 
+var Gem = function(x, y) {
+    this.x = x;
+    this.y = y;
+    this.render = function() {
+        ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+    };
+};
+
 scoreBoard.render = function() {
     ctx.fillStyle = 'rgb(24,93,107)';
     ctx.fillRect(0, 0, 101, canvas.height);
@@ -360,12 +349,10 @@ scoreBoard.render = function() {
     ctx.fillRect(606, 0, 707, canvas.height);
     froggerTitle.render();
     life.render();
-    orangeGemBoard.render();
     gemScore();
+    levelBoard();
     restoreLifes();
 };
-
-
 
 var heartOne = new Heart(606, 200);
 var heartTwo = new Heart(606, 300);
@@ -390,26 +377,35 @@ var threeLess = new HeartBlack(2, 606, 400);
 
 var lifeLessArray = [];
 
-function restoreLifes(){
-  if((lifeLessArray.length === 1) && (gemCounter >= 5)){
-      lifeLessArray.pop();
-      gemCounter = gemCounter - 5;
-      collisionCounter = 0;
-    }else if ((lifeLessArray.length === 5) && (gemCounter >=5)){
+function restoreLifes() {
+    if ((lifeLessArray.length === 1) && (gemCounter >= 5)) {
         lifeLessArray.pop();
-        gemCounter = gemCounter - 2;
+        gemCounter = gemCounter - 5;
         collisionCounter = 0;
-      }
+    } else if ((lifeLessArray.length === 2) && (gemCounter >= 5)) {
+        lifeLessArray.pop();
+        gemCounter = gemCounter - 5;
+        collisionCounter = 1;
     }
+}
 
 function gemScore() {
     ctx.font = '35px Share Tech Mono';
     ctx.fillStyle = 'rgb(145, 170, 157)';
-    ctx.fillText(gemCounter, 30, 430);
+    ctx.fillText("GEMS", 12, 350);
+    ctx.font = '35px Share Tech Mono';
+    ctx.fillStyle = 'rgb(145, 170, 157)';
+    ctx.fillText(gemCounter, 30, 400);
 }
 
-var orangeGemBoard = new Gem(20, 300); // for the score board and count the gems
-orangeGemBoard.sprite = "images/Gem Orange.png";
+function levelBoard() {
+    ctx.font = '35px Share Tech Mono';
+    ctx.fillStyle = 'rgb(145, 170, 157)';
+    ctx.fillText("Level", 12, 450);
+    ctx.font = '35px Share Tech Mono';
+    ctx.fillStyle = 'rgb(145, 170, 157)';
+    ctx.fillText(level(), 30, 500);
+}
 
 var gameOverScreen = {
     x: 180,
@@ -445,46 +441,80 @@ function againButton(main) {
     }, false);
 }
 
-
-
-//var  getRandomX = Math.floor(Math.random() * (5 - 0) + 0);
-
-//var getRandomY = Math.floor(Math.random() * (3 - 0) + 0);
-
 var gemXpositions = [120, 221, 322, 423, 524];
 var gemYpositions = [190, 270, 350];
 
+var blueGem = new Gem();
+blueGem.sprite = "images/Gem Blue.png";
+var greenGem = new Gem();
+greenGem.sprite = "images/Gem Green.png";
 var orangeGem = new Gem();
 orangeGem.sprite = "images/Gem Orange.png";
+
+setInterval(function() {
+    if (blueGem.x > 0 && blueGem.y > 0) {
+        blueGem.x = -100;
+        blueGem.y = -100;
+    } else {
+        blueGem.x = gemXpositions[Math.floor(Math.random() * 5)];
+        blueGem.y = gemYpositions[Math.floor(Math.random() * 3)];
+    }
+}, (5000 * Math.random()) + 5000);
 
 setInterval(function() {
     if (orangeGem.x > 0 && orangeGem.y > 0) {
         orangeGem.x = -100;
         orangeGem.y = -100;
-        console.log(player.x);
     } else {
         orangeGem.x = gemXpositions[Math.floor(Math.random() * 5)];
         orangeGem.y = gemYpositions[Math.floor(Math.random() * 3)];
-      }
-}, (5000 * Math.random()) + 3000);
+    }
+}, (5000 * Math.random()) + 5000);
+
+setInterval(function() {
+    if (greenGem.x > 0 && greenGem.y > 0) {
+        greenGem.x = -100;
+        greenGem.y = -100;
+    } else {
+        greenGem.x = gemXpositions[Math.floor(Math.random() * 5)];
+        greenGem.y = gemYpositions[Math.floor(Math.random() * 3)];
+    }
+}, (5000 * Math.random()) + 5000);
 
 var gemCounter = 0;
 
-Gem.prototype.collision = function() {
-        var gemX = this.x;
-        var gemY = this.y;
-        if (player.x >= gemX - 55 && player.x <= gemX + 55 && player.y >= gemY - 55 && player.y <= gemY) {
-                this.x = -100;
-                this.y = -100;
-                gemCounter++;
-                console.log(gemCounter);
-  }
-};
+function collision() {
+    var greenX = greenGem.x;
+    var greenY = greenGem.y;
+    var orangeX = orangeGem.x;
+    var orangeY = orangeGem.y;
+    var blueX = blueGem.x;
+    var blueY = blueGem.y;
+    if (player.x >= greenX - 55 && player.x <= greenX + 55 && player.y >= greenY - 55 && player.y <= greenY) {
+        greenGem.x = -100;
+        greenGem.y = -100;
+        gemCounter += 1;
+    } else if (player.x >= orangeX - 55 && player.x <= orangeX + 55 && player.y >= orangeY - 55 && player.y <= orangeY) {
+        orangeGem.x = -100;
+        orangeGem.y = -100;
+        gemCounter += 2;
+    } else if (player.x >= blueX - 55 && player.x <= blueX + 55 && player.y >= blueY - 55 && player.y <= blueY) {
+        blueGem.x = -100;
+        blueGem.y = -100;
+        gemCounter += 3;
+    }
+}
 
-
-
-var greenGem = new Gem();
-greenGem.sprite = "images/Gem Green.png";
-
-var blueGem = new Gem();
-greenGem.sprite = "images/Blue Green.png";
+function level() {
+    if (gemCounter < 10) {
+        return 1;
+    } else if ((gemCounter >= 10) && (gemCounter < 20)) {
+        return 2;
+    } else if ((gemCounter >= 20) && (gemCounter < 30)) {
+        return 3;
+    } else if ((gemCounter >= 30) && (gemCounter < 40)) {
+        return 4;
+    } else if (gemCounter >= 40) {
+        return 5;
+    }
+}
