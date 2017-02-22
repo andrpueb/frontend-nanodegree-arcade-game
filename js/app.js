@@ -1,4 +1,4 @@
-var Enemy = function(x, y) {
+var Enemy = function (x, y) {
     this.x = x;
     this.y = y;
     // Variables applied to each of our instances go here,
@@ -10,7 +10,7 @@ var Enemy = function(x, y) {
     this.speed = setSpeed();
 };
 
-var setSpeed = function() {
+var setSpeed = function () {
     random = Math.random();
     if (random < 0.33) {
         return 220;
@@ -30,15 +30,15 @@ var setSpeed = function() {
 var enemyYpositions = [140, 220, 300];
 var enemyXpositions = [-100, -500, -800, -1000, -300, -2000, -1500];
 
-var changeYposition = function() {
+var changeYposition = function () {
     return enemyYpositions[Math.floor(Math.random() * (3))];
 };
 
-var changeXposition = function() {
+var changeXposition = function () {
     return enemyXpositions[Math.floor(Math.random() * (8 - 1 + 0) + 1)];
 };
 
-
+//enemy instantiation
 var enemyOneOne = new Enemy(changeXposition(), changeYposition());
 var enemyOneTwo = new Enemy(changeXposition(), changeYposition());
 var enemyTwoOne = new Enemy(changeXposition(), changeYposition());
@@ -47,8 +47,9 @@ var enemyThreeOne = new Enemy(changeXposition(), changeYposition());
 var enemyThreeThree = new Enemy(changeXposition(), changeYposition());
 
 
+var allEnemies = [enemyOneOne, enemyOneTwo, enemyThreeOne, enemyTwoOne, enemyTwoTwo, enemyThreeThree];
 
-Enemy.prototype.update = function(dt) {
+Enemy.prototype.update = function (dt) {
     if (this.x < 600) {
         this.x = this.x + (dt * this.speed) * level();
     } else {
@@ -57,33 +58,47 @@ Enemy.prototype.update = function(dt) {
 };
 
 // Draw the enemy on the screen, required method for game
-Enemy.prototype.render = function() {
+Enemy.prototype.render = function () {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
-var Player = function() {
-    this.x = 303;
-    this.y = 400;
-    this.sprite = 'images/char-boy.png';
-};
+//The superclass
+var Element = function (x, y, sprite) {
+    this.x = x;
+    this.y = y;
+    this.sprite = sprite;
+}
 
-Player.prototype.update = function() {
-
-};
-
-var Pow = function(x, y) {
-    this.x = -200;
-    this.y = -400;
-    this.sprite = 'images/pow.png';
-};
-
-Pow.prototype.render = function(x, y) {
+Element.prototype.render = function () {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-};
+}
 
-
+//I create a function to make the inheritance process faster
+var inherit = function(subClass, superClass){
+    subClass.prototype = Object.create(superClass.prototype);
+    subClass.prototype.constructor = subClass;
+}
 
 var collisionCounter = 0;
+
+Enemy.prototype.collision = function(){
+    if (this.x >= player.x - 55 && this.x <= player.x + 55 && this.y >= player.y - 55 && this.y <= player.y) {
+            collisionCounter++;
+            pow.x = player.x;
+            pow.y = player.y + 50;
+            console.log(collisionCounter);
+            setTimeout(function () {
+                pow.x = -100;
+                pow.y = -100;
+
+            }, 200);
+            player.y = 400;
+            player.x = 303;
+        }
+}
+
+
+//Pushes a black heart into array to draw a black heart in case of collision
 
 function countCollision() {
     if (collisionCounter === 1) {
@@ -96,33 +111,21 @@ function countCollision() {
     }
 }
 
-
-Player.prototype.collision = function() {
-    for (var i = 0; i < allEnemies.length; i++) {
-        var enemies = allEnemies[i];
-        var thePlayerX = this.x;
-        var thePlayerY = this.y;
-        if (enemies.x >= thePlayerX - 55 && enemies.x <= thePlayerX + 55 && enemies.y >= thePlayerY - 55 && enemies.y <= thePlayerY) {
-            collisionCounter++;
-            pow.x = thePlayerX;
-            pow.y = thePlayerY + 50;
-            setTimeout(function() {
-                pow.x = -100;
-                pow.y = -100;
-
-            }, 200);
-            player.y = 400;
-            player.x = 303;
-        }
-        countCollision();
-    }
+var Player = function (x, y, sprite) {
 };
 
-Player.prototype.render = function() {
-    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+inherit(Player, Element);
+
+var player = new Player();
+    player.x = 303;
+    player.y = 400;
+    player.sprite = 'images/char-boy.png';
+
+Player.prototype.update = function () {
+
 };
 
-Player.prototype.handleInput = function(chPosition) {
+Player.prototype.handleInput = function (chPosition) {
     if (chPosition === 'left' && this.x > 202) {
         this.x = this.x - 100;
     } else if (chPosition === 'right' && this.x < 404) {
@@ -130,32 +133,31 @@ Player.prototype.handleInput = function(chPosition) {
     } else if (chPosition === 'up' && this.y > 100) {
         this.y = this.y - 82;
         if (this.y < 100) {
-            setTimeout(function() {
-                player.y = 400;
-                player.x = 303;
-            }, 100);
+            setTimeout(function () {
+                this.x = 303;
+                this.y = 400;
+            }.bind(this), 100); //needed to bind "this" to player "this" because setTimeout uses global scope
         }
     } else if (chPosition == 'down' && this.y < 404) {
         this.y = this.y + 82;
     }
 };
 
-Player.prototype.update = function() {
+//Whenever the players collides width a bug a POW! image will appear
+var Pow = function(){
 
 };
 
+inherit(Pow, Element);
 
-
-
-// Now write your own player class
-// This class requires an update(), render() and
-// a handleInput() method.
-
-
-var allEnemies = [enemyOneOne, enemyOneTwo, enemyThreeOne, enemyTwoOne, enemyTwoTwo, enemyThreeThree];
-
-var player = new Player();
 var pow = new Pow();
+    pow.x = -200;
+    pow.y = -400;
+    pow.sprite = 'images/pow.png';
+
+
+
+
 
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
@@ -164,7 +166,7 @@ var pow = new Pow();
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
-document.addEventListener('keyup', function(e) {
+document.addEventListener('keyup', function (e) {
     var allowedKeys = {
         37: 'left',
         38: 'up',
@@ -179,6 +181,17 @@ document.addEventListener('keyup', function(e) {
 
 //Menu background
 
+var Title = function() {
+
+}
+
+inherit(Title, Element);
+
+var title = new Title();
+    title.x = 50;
+    title.y = 20;
+    title.sprite = "images/frogger.png";
+
 var menuBackground = {
     x: 0,
     y: 0,
@@ -186,44 +199,44 @@ var menuBackground = {
     height: 650
 };
 
-var froggerTitle = {
-    x: 50,
-    y: 20,
-    sprite: "images/frogger.png"
-};
-
-froggerTitle.render = function() {
-    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-};
-
-
-menuBackground.render = function() {
+menuBackground.render = function () {
     ctx.fillStyle = 'rgb(24,93,107)';
     ctx.fillRect(this.x, this.y, this.width, this.height);
-    froggerTitle.render();
+    title.render();
 };
 
 //Draw characters
 
 var allCharacters = [];
 
-function Character(x, y, sprite) {
-    this.x = x,
-        this.y = y,
-        this.sprite = sprite,
-        allCharacters.push(this);
+var Character = function(x, y, sprite){
+    allCharacters.push(this);
 }
-Character.prototype.render = function() {
-    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-};
-var catChar = new Character(101, 200, "images/char-cat-girl.png");
-var hornChar = new Character(202, 200, 'images/char-horn-girl.png');
-var pinkGirl = new Character(303, 200, 'images/char-pink-girl.png');
-var charBoy = new Character(404, 200, 'images/char-boy.png');
-var prinGirl = new Character(505, 200, 'images/char-princess-girl.png');
 
-//GET THE POSITION OF THE MOUSE
+inherit(Character, Element);
 
+var catChar = new Character();
+    catChar.x = 101;
+    catChar.y = 200;
+    catChar.sprite = "images/char-cat-girl.png";
+var hornChar = new Character();
+    hornChar.x=202;
+    hornChar.y=200;
+    hornChar.sprite='images/char-horn-girl.png';
+var pinkGirl = new Character();
+    pinkGirl.x = 303;
+    pinkGirl.y = 200;
+    pinkGirl.sprite = 'images/char-pink-girl.png';
+var charBoy = new Character();
+    charBoy.x=404,
+    charBoy.y=200,
+    charBoy.sprite= 'images/char-boy.png';
+var prinGirl = new Character()
+    prinGirl.x =505;
+    prinGirl.y =200;
+    prinGirl.sprite = 'images/char-princess-girl.png'
+
+//Get the position of the mouse in the canvas
 function getMousePos(canvas, evt) {
     var rect = canvas.getBoundingClientRect();
     return {
@@ -233,15 +246,16 @@ function getMousePos(canvas, evt) {
 
 }
 
-var selector = {
-    x: 303,
-    y: 200,
-    sprite: 'images/Selector.png'
-};
+var Selector = function () {
+}
 
-selector.render = function() {
-    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-};
+inherit(Selector, Element);
+
+var selector = new Selector();
+    selector.x= 303;
+    selector.y= 200;
+    selector.sprite = 'images/Selector.png';
+
 //Select your character text
 
 function startText() {
@@ -252,15 +266,16 @@ function startText() {
 
 //Start button
 
-var goButton = {
-    x: 300,
-    y: 380,
-    sprite: 'images/go.png'
-};
+var GoButton = function(){
 
-goButton.render = function() {
-    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-};
+}
+
+inherit(GoButton, Element);
+
+var goButton = new GoButton();
+    goButton.x = 300;
+    goButton.y = 380;
+    goButton.sprite ='images/go.png';
 
 
 function start(main) {
@@ -303,7 +318,7 @@ function changeCharacter(e) {
     menuBackground.render();
     selector.render();
 
-    allCharacters.forEach(function(character) {
+    allCharacters.forEach(function (character) {
         character.render();
     });
 
@@ -313,70 +328,90 @@ function changeCharacter(e) {
 
 window.addEventListener('mousedown', changeCharacter, false);
 
-var scoreBoard = {};
+var ScoreBoard = {};
 
-var life = {
-    x: 620,
-    y: 180,
-    sprite: 'images/life.png',
-    render: function() {
-        ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-    }
-};
-var Heart = function(x, y) {
-    this.x = x;
-    this.y = y;
-    this.sprite = "images/Heart.png";
-    this.render = function() {
-        ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-    };
-};
+var Life = function(){
 
-var Gem = function(x, y) {
-    this.x = x;
-    this.y = y;
-    this.render = function() {
-        ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-    };
-};
+}
 
-scoreBoard.render = function() {
+inherit(Life, Element);
+
+var life = new Life()
+    life.x = 620;
+    life.y = 180;
+    life.sprite = 'images/life.png';
+
+var Heart = function(){
+
+}
+
+inherit(Heart, Element);
+Heart.prototype.sprite = 'images/Heart.png';
+
+var Gem = function(){
+
+}
+
+inherit(Gem, Element);
+
+
+ScoreBoard.render = function () {
     ctx.fillStyle = 'rgb(24,93,107)';
     ctx.fillRect(0, 0, 101, canvas.height);
     ctx.fillStyle = 'rgb(24,93,107)';
     ctx.fillRect(0, 0, canvas.width, 135);
     ctx.fillStyle = 'rgb(24,93,107)';
     ctx.fillRect(606, 0, 707, canvas.height);
-    froggerTitle.render();
+    title.render();
     life.render();
     gemScore();
     levelBoard();
     restoreLifes();
 };
 
-var heartOne = new Heart(606, 200);
-var heartTwo = new Heart(606, 300);
-var heartThree = new Heart(606, 400);
+var heartOne = new Heart();
+    heartOne.x = 606;
+    heartOne.y = 200;
+var heartTwo = new Heart();
+    heartTwo.x = 606;
+    heartTwo.y = 300;
+var heartThree = new Heart();
+    heartThree.x = 606;
+    heartThree.y = 400;
 
 
 var lifesArray = [heartOne, heartTwo, heartThree];
 
-var HeartBlack = function(id, x, y) {
-    this.id = id;
-    this.x = x;
-    this.y = y;
-    this.sprite = "images/HeartBlack.png";
-    this.render = function() {
-        ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-    };
+var HeartBlack = function(){
+
 };
 
-var oneLess = new HeartBlack(0, 606, 200);
-var twoLess = new HeartBlack(1, 606, 300);
-var threeLess = new HeartBlack(2, 606, 400);
 
+inherit(HeartBlack, Element);
+
+
+HeartBlack.prototype.sprite = "images/HeartBlack.png";
+HeartBlack.prototype.id = this.id;
+
+
+var oneLess = new HeartBlack();
+    oneLess.id = 0;
+    oneLess.x = 606;
+    oneLess.y = 200;
+var twoLess = new HeartBlack();
+    twoLess.id = 1;
+    twoLess.x = 606;
+    twoLess.y = 300;
+var threeLess = new HeartBlack();
+    threeLess.id = 2;
+    threeLess.x = 606;
+    threeLess.y = 400;
+
+//The array to push the black hearts when the player colides against a bug
 var lifeLessArray = [];
 
+
+//If the player has more than 5 gems and collides against a bug then 5 gems will be taken to recover one heart
 function restoreLifes() {
     if ((lifeLessArray.length === 1) && (gemCounter >= 5)) {
         lifeLessArray.pop();
@@ -389,6 +424,8 @@ function restoreLifes() {
     }
 }
 
+
+//Gems collected
 function gemScore() {
     ctx.font = '35px Share Tech Mono';
     ctx.fillStyle = 'rgb(145, 170, 157)';
@@ -398,6 +435,8 @@ function gemScore() {
     ctx.fillText(gemCounter, 30, 400);
 }
 
+
+//Level achieved
 function levelBoard() {
     ctx.font = '35px Share Tech Mono';
     ctx.fillStyle = 'rgb(145, 170, 157)';
@@ -419,7 +458,8 @@ var tryAgain = {
     sprite: "images/tryAgain.png"
 };
 
-gameOverScreen.render = function(reset) {
+
+gameOverScreen.render = function () {
     if (lifeLessArray.length > 2) {
         ctx.fillStyle = 'rgba(182,73,38,.4)';
         ctx.fillRect(0, 0, canvas.width,
@@ -430,7 +470,7 @@ gameOverScreen.render = function(reset) {
     }
 };
 
-function againButton(main) {
+function againButton() {
     window.addEventListener('mousedown', function continueGame(e) {
         var pos = getMousePos(canvas, e);
         var posx = pos.x;
@@ -441,6 +481,7 @@ function againButton(main) {
     }, false);
 }
 
+//Arrays with possible position for the gems
 var gemXpositions = [120, 221, 322, 423, 524];
 var gemYpositions = [190, 270, 350];
 
@@ -451,17 +492,21 @@ greenGem.sprite = "images/Gem Green.png";
 var orangeGem = new Gem();
 orangeGem.sprite = "images/Gem Orange.png";
 
-setInterval(function() {
+
+//Intervals to draw the gems in the canvas
+setInterval(function () {
+    //if the gem is visible in the canvas then move it out
     if (blueGem.x > 0 && blueGem.y > 0) {
         blueGem.x = -100;
         blueGem.y = -100;
+        // if is not visible then put it in random position
     } else {
         blueGem.x = gemXpositions[Math.floor(Math.random() * 5)];
         blueGem.y = gemYpositions[Math.floor(Math.random() * 3)];
     }
 }, (5000 * Math.random()) + 5000);
 
-setInterval(function() {
+setInterval(function () {
     if (orangeGem.x > 0 && orangeGem.y > 0) {
         orangeGem.x = -100;
         orangeGem.y = -100;
@@ -471,7 +516,7 @@ setInterval(function() {
     }
 }, (5000 * Math.random()) + 5000);
 
-setInterval(function() {
+setInterval(function () {
     if (greenGem.x > 0 && greenGem.y > 0) {
         greenGem.x = -100;
         greenGem.y = -100;
@@ -481,9 +526,10 @@ setInterval(function() {
     }
 }, (5000 * Math.random()) + 5000);
 
+//Gem counter for the Gems collected
 var gemCounter = 0;
 
-function collision() {
+function GemCollision() {
     var greenX = greenGem.x;
     var greenY = greenGem.y;
     var orangeX = orangeGem.x;
@@ -504,6 +550,7 @@ function collision() {
         gemCounter += 3;
     }
 }
+
 
 function level() {
     if (gemCounter < 10) {

@@ -105,10 +105,11 @@ var Engine = (function (global) {
     function updateEntities(dt) {
         allEnemies.forEach(function (enemy) {
             enemy.update(dt);
+            enemy.collision();
         });
         player.update();
-        player.collision();
-        collision();
+        GemCollision();
+        countCollision();
 
     }
 
@@ -174,7 +175,7 @@ var Engine = (function (global) {
         allEnemies.forEach(function (enemy) {
             enemy.render();
         });
-        scoreBoard.render();
+        ScoreBoard.render();
         player.render();
         pow.render();
         lifesArray.forEach(function (enemy) {
@@ -184,6 +185,7 @@ var Engine = (function (global) {
             enemy.render();
         });
         gameOverScreen.render(reset);
+
     }
 
     /* This function does nothing but it could have been a good place to
